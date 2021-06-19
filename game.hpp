@@ -26,10 +26,12 @@ class Game
         // virtual void pause();
         virtual void update_timer();
         virtual void print_fps(int y = 1, int x = 0) { mvprintw(y, x, "Frame: %5d", frame); };
-        Game(int fps) : fps(fps), key(ERR), frame(0), timeCounter(0), ms_perFrame(1000.0/fps), state(Idle) {}
+        Game(int fps) : key(ERR), fps(fps), frame(0), timeCounter(0), ms_perFrame(1000.0/fps), state(Idle) {}
+        virtual ~Game() {}
+    protected:
+        int key;
     private:
         int fps;
-        int key;
         int frame;
         double timeCounter;
         double ms_perFrame;

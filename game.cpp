@@ -34,7 +34,10 @@ bool Game::should_update()
 
 void Game::init()
 {
-
+    frame = 0;
+    timeCounter = 0;
+    key = ERR;
+    clear();
 }
 
 void Game::start()

@@ -1,16 +1,16 @@
-PROGRAMS := snake
+PROGRAMS := main
 GCC := g++
-CFLAGS := -g -Werror -Wpedantic
+CFLAGS := -g -Wall -Wpedantic
 LDFLAGS := -lncurses
-OBJS := game.o snakegame.o
+OBJS := snake.o game.o snakegame.o
 
-all: $(OBJS) $(PROGRAMS)
+all: $(PROGRAMS)
 
-$(PROGRAMS): % : %.cpp
-	$(GCC) $(CFLAGS) $^ $(LDFLAGS) $(OBJS) -o $@
+$(PROGRAMS): $(OBJS)
+	$(GCC) $(CFLAGS) $(OBJS) $(LDFLAGS)  main.cpp -o $@
 
 $(OBJS): %.o: %.cpp %.hpp
-	$(GCC) $(CFLAGS) $(LDFLAGS) -c $^
+	$(GCC) $(CFLAGS) $(LDFLAGS) -c $<
 
 clean:
 	rm $(PROGRAMS) $(OBJS)

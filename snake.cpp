@@ -1,28 +1,48 @@
-#include <iostream>
-#include <ncurses.h>
-#include <unistd.h>
-#include <unordered_map>
-#include <deque>
-#include <string>
+#include "snake.hpp"
 
-#include "snakegame.hpp"
-// terminal size: (LINES, COLS)
-void ncurses_init()
+
+void Snake::change_dir(Coord2D dir)
 {
-    initscr();
-    keypad(stdscr, TRUE);
-    noecho();
-    nodelay(stdscr, TRUE);
-    cbreak();
+    if(abs(dir.first) == abs(direction.first) && abs(dir.first) == abs(direction.first))
+    {
+        return;
+    }
+    direction = dir;
 }
-int main()
+
+Coord2D Snake::nextPosition()
 {
-    ncurses_init();
-    Coord2D map(LINES/2, COLS/2);
-    SnakeGame game(map, {5, 5},30);
-    game.init();
-    game.start();
-
-
-    endwin();
+    Coord2D nextPos = head();
+    nextPos.first += direction.first;
+    nextPos.second += direction.second;
+    return nextPos;
 }
+
+bool Snake::digest()
+{
+    if(eatedFood.front() == tail())
+    {
+        eatedFood.pop_front();
+        return true;
+    }
+    return false;
+}
+Coord2D Snake::move()
+{
+    Coord2D next = nextPosition();
+    body.push_front(next);
+
+    if(digest())
+    {
+        return noPos;
+    }
+    else
+    {
+        Coord2D toRemove = body.back();
+        body.pop_back();
+        return toRemove;
+    }
+}
+
+const Coord2D Snake::noPos = Coord2D(-1, -1);
+
