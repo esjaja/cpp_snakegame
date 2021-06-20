@@ -2,7 +2,7 @@ PROGRAMS := main
 GCC := g++
 CFLAGS := -g -Wall -Wpedantic
 LDFLAGS := -lncurses
-OBJS := snake.o game.o snakegame.o
+OBJS := snake.o game.o snakegame.o snakemap.o
 
 all: $(PROGRAMS)
 

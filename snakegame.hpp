@@ -2,9 +2,11 @@
 #define _SNAKE_GAME_H
 
 #include <unordered_map>
+#include <vector>
 #include <ncurses.h>
 #include "snake.hpp"
 #include "game.hpp"
+#include "snakemap.hpp"
 
 #define FOOD 'o'
 #define WALL '#'
@@ -43,26 +45,30 @@ class SnakeGame : public Game
 
     public:
         SnakeGame(Coord2D mapSize, int fps) : 
-            Game(fps), gameMap(mapSize), mapOffset({(LINES - mapSize.first)/2, (COLS - mapSize.second) / 2}),
-                snake(getMapCenter(gameMap, mapOffset),
-                    movementDir[KEY_RIGHT]) 
-                    {
-                    }
+            Game(fps),
+            snakemap(mapSize, {(LINES - mapSize.first)/2, 
+                                (COLS - mapSize.second) / 2}),
+            snake(snakemap.get_center(),
+                  movementDir[KEY_RIGHT]) 
+            {
+            }
+
         void update();
         void init();
+
         bool collision();
+        Coord2D generate_food();
+
         void control_snake(int key);
-        void print_map();
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
+        
+        void print_map();
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
-        Coord2D getMapCenter(Coord2D mapSize, Coord2D mapOffset) 
-        {
-            return {mapOffset.first + mapSize.first / 2, mapOffset.second + mapSize.second / 2};
-        }
+
     private:
-        Coord2D gameMap;
-        Coord2D mapOffset;
+        SnakeMap snakemap;
+        std::vector<bool> mapInfo;
         Snake snake;
 };
 

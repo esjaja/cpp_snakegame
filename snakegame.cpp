@@ -39,15 +39,18 @@ bool SnakeGame::collision()
 
 void SnakeGame::print_map()
 {
+    Coord2D gameMap = snakemap.get_map();
+    Coord2D mapOffset = snakemap.get_offset();
+
     std::string row_boarder(gameMap.second, WALL);
     std::string row_normal = WALL + std::string(gameMap.second - 2, ' ') + WALL;
     
-    for(int row = 0; row < gameMap.first; row++)
+    for(int r_index = 0; r_index < gameMap.first; r_index++)
     {
-        const char* toPrint = (row == 0 || (row + 1) == gameMap.first)?
+        const char* toPrint = (r_index == 0 || (r_index + 1) == gameMap.first)?
                                 row_boarder.c_str() :
                                 row_normal.c_str();
-        mvprintw(row + mapOffset.first, 
+        mvprintw(r_index + mapOffset.first, 
                     mapOffset.second, 
                     toPrint);
     }
