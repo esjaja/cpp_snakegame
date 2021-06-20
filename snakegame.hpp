@@ -75,7 +75,6 @@ class SnakeGame : public Game
 
     private:
         SnakeMap snakemap;
-        std::vector<bool> mapInfo;
         Snake snake;
 };
 
