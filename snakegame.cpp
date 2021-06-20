@@ -66,7 +66,7 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
     if(snakemap.test(newHead) == true)
     {
         mvprintw(4, 0, "Invalid: %d, %d", newHead.first, newHead.second);
-        // return false;
+        return false;
     }
 
     oldHead = snake.head();
@@ -103,6 +103,8 @@ SnakeInitState::SnakeInitState(SnakeGame *game) :
 
 void SnakeInitState::onStateEnter()
 {
+    clear();
+    nodelay(stdscr, FALSE);
     mvprintw(0, 0, "Press 's' to start");
     s_game->print_map();
     refresh();
@@ -118,6 +120,7 @@ void SnakeInitState::update()
 
 void SnakePlayState::onStateEnter()
 {
+    s_game->reset();
     nodelay(stdscr, TRUE);
     mvprintw(0, 0, std::string(COLS, ' ').c_str());
 }
@@ -138,8 +141,8 @@ void SnakePlayState::update()
         
         if(validMove == false)
         {
-            // s_game->setState(new SnakeInitState(s_game));
-            // return;
+            s_game->setState(new SnakeInitState(s_game));
+            return;
         }
         // else
         // {

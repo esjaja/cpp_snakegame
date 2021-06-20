@@ -13,6 +13,14 @@ class Snake
         bool digest();
         Coord2D nextPosition();
         Coord2D move();
+
+        void reset(Coord2D initPos, Coord2D dir)
+        {
+            body.clear();
+            eatedFood.clear();
+            body.push_front(initPos);
+            direction = dir;
+        }
         void change_dir(Coord2D dir);
 
         Coord2D head() { return body.front(); }
@@ -25,8 +33,7 @@ class Snake
         }
 
         Snake(Coord2D initPos, Coord2D dir) : direction(dir) { 
-            body.clear(); 
-            body.push_front(initPos);
+            reset(initPos, dir);
         }
 
 

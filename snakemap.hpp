@@ -10,6 +10,11 @@ class SnakeMap
         SnakeMap(Coord2D mapSize, Coord2D mapOffset): 
             map(mapSize), _offset(mapOffset)
         {
+            reset();
+        }
+        void reset() 
+        {
+            mapState.clear();
             mapState.resize(row() * col());
             empty_space = mapState.size();
             setWalls();

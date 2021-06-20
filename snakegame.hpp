@@ -66,6 +66,8 @@ class SnakeGame : public Game
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
 
+        void reset() { snakemap.reset(); snake.reset(snakemap.get_center(), movementDir[KEY_RIGHT]); }
+
     private:
         SnakeMap snakemap;
         std::vector<bool> mapInfo;
