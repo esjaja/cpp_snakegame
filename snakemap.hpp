@@ -12,13 +12,8 @@ class SnakeMap
         {
             reset();
         }
-        void reset() 
-        {
-            mapState.clear();
-            mapState.resize(row() * col());
-            empty_space = mapState.size();
-            setWalls();
-        }
+        void reset();
+        bool test(size_t index);
         bool test(Coord2D pos);
         void set(size_t index, bool occupy);
         void set(int r, int c, bool occupy);
@@ -28,6 +23,7 @@ class SnakeMap
 
         Coord2D get_empty_pos();
 
+        Coord2D toPos(size_t index);
         size_t getIndex(Coord2D pos);
 
         Coord2D get_center();

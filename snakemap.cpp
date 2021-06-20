@@ -1,11 +1,17 @@
 #include "snakemap.hpp"
+#include <time.h>
+#include <random>
 
+bool SnakeMap::test(size_t index)
+{
+    if(mapState.size() < index) return true;
+    return mapState[index];
+}
 
 bool SnakeMap::test(Coord2D pos)
 {
     size_t index = getIndex(pos);
-    if(mapState.size() < index) return true;
-    return mapState[index];
+    return test(index);
 }
 
 void SnakeMap::set(size_t index, bool occupy)
@@ -37,6 +43,30 @@ void SnakeMap::set(std::vector<Coord2D> pos, bool occupy)
     }
 }
 
+void SnakeMap::reset() 
+{
+    srand(time(NULL));
+    mapState.clear();
+    mapState.resize(row() * col());
+    empty_space = mapState.size();
+    setWalls();
+}
+
+Coord2D SnakeMap::get_empty_pos()
+{
+    if(empty_space == 0) return Snake::noPos;
+
+    int max = mapState.size() - 1;
+    int min = 0;
+    int randomIndex = rand() % (max - min + 1) + min;;
+
+    while(test(randomIndex) == true)
+    {
+        randomIndex = (randomIndex + 1) % (max + 1);
+    }
+    return toPos(randomIndex);
+}
+
 void SnakeMap::setWalls()
 {
     int colMax = col();
@@ -59,6 +89,14 @@ size_t SnakeMap::getIndex(Coord2D pos)
     int c = pos.second - _offset.second;
     int index = r * col() + c;
     return index;
+}
+
+Coord2D SnakeMap::toPos(size_t index)
+{
+    int first = (index / col()) + _offset.first;
+    int second = (index % col()) + _offset.second;
+    mvprintw(5, 0, "Index:%d, {%d, %d}", index, first, second);
+    return {first, second};
 }
 
 Coord2D SnakeMap::get_center()

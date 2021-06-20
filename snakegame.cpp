@@ -63,7 +63,14 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
     newHead = snake.nextPosition();
 
     // check collision
-    if(snakemap.test(newHead) == true)
+    if(food.find(newHead) != food.end())
+    {
+        snake.eat(newHead);
+        food.erase(newHead);
+        snakemap.set(newHead, false);
+        score++;
+    }
+    else if(snakemap.test(newHead) == true)
     {
         mvprintw(4, 0, "Invalid: %d, %d", newHead.first, newHead.second);
         return false;
@@ -90,9 +97,19 @@ void SnakeGame::print_allSnake()
 
 void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove)
 {
+    char head = (foodCount() == 0) ? EATEN : SNAKE_BODY;
     printPos(newHead, SNAKE_HEAD);
-    printPos(oldHead);
+    printPos(oldHead, head);
     if(toRemove != snake.noPos) printPos(toRemove, ' ');
+}
+
+void SnakeGame::generate_food()
+{
+    Coord2D pos = snakemap.get_empty_pos();
+    food.insert(pos);
+    snakemap.set(pos, true);
+    printPos(pos, FOOD);
+    mvprintw(6, 0, "%d, %d", pos.first, pos.second);
 }
 
 SnakeInitState::SnakeInitState(SnakeGame *game) : 
@@ -126,6 +143,13 @@ void SnakePlayState::onStateEnter()
     mvprintw(0, 0, std::string(COLS, ' ').c_str());
 }
 
+void SnakePlayState::onStateExit()
+{
+    nodelay(stdscr, FALSE);
+    mvprintw(4, 0, "GGG, Press any key");
+    getch();
+}
+
 void SnakePlayState::update()
 {
     if(s_game->should_update()){
@@ -145,10 +169,13 @@ void SnakePlayState::update()
             s_game->setState(new SnakeInitState(s_game));
             return;
         }
-        // else
-        // {
-            s_game->print_updatedSnake(newHead, oldHead, toRemove);
-        // }
+        s_game->print_updatedSnake(newHead, oldHead, toRemove);
+
+        if (s_game->foodCount() == 0)
+        {
+            s_game->generate_food();
+        }
+        
         refresh();
     
         s_game->update_frame();
