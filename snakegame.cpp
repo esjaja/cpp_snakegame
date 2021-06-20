@@ -113,13 +113,13 @@ void SnakePlayState::update()
         
         if(validMove == false)
         {
-            
+
         }
         
         s_game->print_snake(newHead, oldHead, toRemove);
         refresh();
     
-        s_game->add_frameCounter();
+        s_game->update_frame();
     }
 }
 

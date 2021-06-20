@@ -27,7 +27,7 @@ class Game
 
         void update_timer();
         bool should_update();
-        void add_frameCounter() { ms_timeCounter = 0; frame++; }
+        void update_frame() { ms_timeCounter = 0; frame++; }
         void set_fps(int _fps);
         
         void setState(StateBase *state);
