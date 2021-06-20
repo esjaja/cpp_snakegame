@@ -38,4 +38,4 @@ A Snake game using `ncurses` library to control terminal IO.
 4. Snake record the absolute position (where it is on terminal), so SnakeMap should substract mapoffset from it to get corresponding position in its internal map.
 
 ## TODO
-1. Map: Random generate an empty pos from map
+1. menu, pause, resume, restart, replay

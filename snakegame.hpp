@@ -16,6 +16,9 @@
 #define SNAKE_HEAD '@'
 #define SNAKE_TAIL '-'
 
+#define PER_SCORE_TO_ADD_FPS 5
+#define FPS_STEP 2
+
 struct MyHash {
     size_t operator()(const Coord2D & v) const {
         return v.first ^ v.second;

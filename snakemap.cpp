@@ -95,7 +95,6 @@ Coord2D SnakeMap::toPos(size_t index)
 {
     int first = (index / col()) + _offset.first;
     int second = (index % col()) + _offset.second;
-    mvprintw(5, 0, "Index:%d, {%d, %d}", index, first, second);
     return {first, second};
 }
 

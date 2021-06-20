@@ -24,7 +24,7 @@ void Game::update_timer()
     double clockPassed = get_current_ms_clock();
     ms_timeCounter += (clockPassed - lastUpdateClock);
     lastUpdateClock = clockPassed;
-    mvprintw(2,0,"Time elapsed: %lf", ms_timeCounter);
+    mvprintw(2,0,"FPS: %d, Time elapsed: %.2lf", fps, ms_timeCounter);
 }
 
 bool Game::should_update()

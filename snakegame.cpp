@@ -69,6 +69,11 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
         food.erase(newHead);
         snakemap.set(newHead, false);
         score++;
+        if(((get_fps() - init_fps)/FPS_STEP) * PER_SCORE_TO_ADD_FPS + (PER_SCORE_TO_ADD_FPS - 1) < score)
+        {
+            set_fps(get_fps() + FPS_STEP);
+        }
+        mvprintw(4, 0, "Score: %d", score);
     }
     else if(snakemap.test(newHead) == true)
     {
@@ -109,7 +114,6 @@ void SnakeGame::generate_food()
     food.insert(pos);
     snakemap.set(pos, true);
     printPos(pos, FOOD);
-    mvprintw(6, 0, "%d, %d", pos.first, pos.second);
 }
 
 SnakeInitState::SnakeInitState(SnakeGame *game) : 
@@ -147,6 +151,8 @@ void SnakePlayState::onStateExit()
 {
     nodelay(stdscr, FALSE);
     mvprintw(4, 0, "GGG, Press any key");
+    refresh();
+    sleep(1);
     getch();
 }
 
