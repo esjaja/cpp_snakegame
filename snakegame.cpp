@@ -122,6 +122,7 @@ void SnakePlayState::onStateEnter()
 {
     s_game->reset();
     nodelay(stdscr, TRUE);
+    
     mvprintw(0, 0, std::string(COLS, ' ').c_str());
 }
 

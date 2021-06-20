@@ -66,7 +66,12 @@ class SnakeGame : public Game
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
 
-        void reset() { snakemap.reset(); snake.reset(snakemap.get_center(), movementDir[KEY_RIGHT]); }
+        void reset() 
+        { 
+            snakemap.reset(); 
+            snake.reset(snakemap.get_center(), movementDir[KEY_RIGHT]); 
+            snakemap.set(snake.get_allpos(), true);
+        }
 
     private:
         SnakeMap snakemap;

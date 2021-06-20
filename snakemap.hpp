@@ -26,6 +26,8 @@ class SnakeMap
         void set(std::vector<Coord2D> pos, bool occupy);
         void setWalls();
 
+        Coord2D get_empty_pos();
+
         size_t getIndex(Coord2D pos);
 
         Coord2D get_center();
