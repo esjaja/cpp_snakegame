@@ -17,7 +17,7 @@ int main()
     Coord2D map(LINES/2, COLS/2);
 
     // Game game(30);
-    SnakeGame game(map, {5, 5}, 15);
+    SnakeGame game(map, 15);
     game.init();
     game.start();
 
