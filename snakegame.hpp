@@ -6,6 +6,12 @@
 #include "snake.hpp"
 #include "game.hpp"
 
+#define FOOD 'o'
+#define WALL '#'
+#define SNAKE_BODY '*'
+#define SNAKE_HEAD '@'
+#define SNAKE_TAIL '-'
+
 extern std::unordered_map<int, Coord2D> movementDir;
 
 class SnakeGame;
@@ -48,6 +54,7 @@ class SnakeGame : public Game
         void control_snake(int key);
         void print_map();
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
+        void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
         Coord2D getMapCenter(Coord2D mapSize, Coord2D mapOffset) 
         {

@@ -1,7 +1,12 @@
 #include "snakegame.hpp"
 #include <unistd.h>
 #include <unistd.h>
-void printPos(Coord2D at, char ch = '@') {
+#include <vector>
+
+
+
+
+void printPos(Coord2D at, char ch = SNAKE_BODY) {
     mvaddch(at.first, at.second, ch);
 }
 
@@ -34,8 +39,8 @@ bool SnakeGame::collision()
 
 void SnakeGame::print_map()
 {
-    std::string row_boarder(gameMap.second, '#');
-    std::string row_normal = '#' + std::string(gameMap.second - 2, ' ') + '#';
+    std::string row_boarder(gameMap.second, WALL);
+    std::string row_normal = WALL + std::string(gameMap.second - 2, ' ') + WALL;
     
     for(int row = 0; row < gameMap.first; row++)
     {
@@ -63,9 +68,19 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
     return true;
 }
 
+void SnakeGame::print_allSnake()
+{
+    std::vector<Coord2D> ss = snake.get_allpos();
+    if(ss.begin() != ss.end()) printPos(*(ss.begin()), SNAKE_HEAD);
+    for(auto it = ss.begin() + 1; it != ss.end(); it++)
+    {
+        printPos(*it, SNAKE_BODY);
+    }
+}
+
 void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove)
 {
-    printPos(newHead, '*');
+    printPos(newHead, SNAKE_HEAD);
     printPos(oldHead);
     if(toRemove != snake.noPos) printPos(toRemove, ' ');
 }
