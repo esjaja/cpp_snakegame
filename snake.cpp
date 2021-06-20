@@ -18,6 +18,11 @@ Coord2D Snake::nextPosition()
     return nextPos;
 }
 
+void Snake::eat(Coord2D food)
+{ 
+    eatedFood.push_back(food); 
+}
+
 bool Snake::digest()
 {
     if(eatedFood.front() == tail())
@@ -38,7 +43,7 @@ Coord2D Snake::move()
     }
     else
     {
-        Coord2D toRemove = body.back();
+        Coord2D toRemove = tail();
         body.pop_back();
         return toRemove;
     }

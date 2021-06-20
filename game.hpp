@@ -6,38 +6,50 @@
 
 double get_current_ms_clock();
 
-enum GameState
+class Game;
+class StateBase
 {
-    Idle,
-    Run,
-    Pause,
-    End
+    public:
+        StateBase(Game *_game)  { game = _game; }
+        virtual void onStateEnter() = 0;
+        virtual void update() = 0;
+        virtual void onStateExit() = 0;
+        virtual ~StateBase() = default;
+    protected:
+        Game *game;
 };
-
 
 class Game
 {
     public:
-        virtual void get_input();
-        virtual void update();
-        virtual bool should_update();
+        void get_input();
+        int currentKey() { return key; }
+
+        void update_timer();
+        bool should_update();
+        void add_frameCounter() { ms_timeCounter = 0; frame++; }
+        void set_fps(int _fps);
+        
+        void setState(StateBase *state);
+
         virtual void init();
         virtual void start();
-        // virtual void pause();
-        virtual void update_timer();
-        virtual void print_fps(int y = 1, int x = 0) { mvprintw(y, x, "Frame: %5d", frame); };
-        Game(int fps) : key(ERR), fps(fps), frame(0), timeCounter(0), ms_perFrame(1000.0/fps), state(Idle) {}
+
+        Game(int fps) : key(ERR), frame(0), 
+                        ms_timeCounter(0), gameState(nullptr)
+                        { 
+                            set_fps(fps);
+                        }
         virtual ~Game() {}
-    protected:
-        int key;
+        StateBase* pauseState;
     private:
+        int key;
         int fps;
         int frame;
-        double timeCounter;
         double ms_perFrame;
+        double ms_timeCounter;
         double lastUpdateClock;
-        GameState state;
+        StateBase* gameState;
 };
-
 
 #endif

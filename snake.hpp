@@ -9,7 +9,7 @@ typedef std::pair<int, int> Coord2D;
 class Snake
 {
     public:
-        void eat(Coord2D food){ eatedFood.push_back(food); }
+        void eat(Coord2D food);
         bool digest();
         Coord2D nextPosition();
         Coord2D move();

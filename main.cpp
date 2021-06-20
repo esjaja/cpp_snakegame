@@ -16,7 +16,8 @@ int main()
     ncurses_init();
     Coord2D map(LINES/2, COLS/2);
 
-    SnakeGame game(map, {5, 5},15);
+    // Game game(30);
+    SnakeGame game(map, {5, 5}, 15);
     game.init();
     game.start();
 

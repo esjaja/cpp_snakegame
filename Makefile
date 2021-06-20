@@ -6,7 +6,7 @@ OBJS := snake.o game.o snakegame.o
 
 all: $(PROGRAMS)
 
-$(PROGRAMS): $(OBJS)
+$(PROGRAMS): $(OBJS) main.cpp
 	$(GCC) $(CFLAGS) $(OBJS) $(LDFLAGS)  main.cpp -o $@
 
 $(OBJS): %.o: %.cpp %.hpp
