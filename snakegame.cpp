@@ -63,7 +63,7 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
     return true;
 }
 
-void SnakeGame::print_snake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove)
+void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove)
 {
     printPos(newHead, '*');
     printPos(oldHead);
@@ -116,7 +116,7 @@ void SnakePlayState::update()
 
         }
         
-        s_game->print_snake(newHead, oldHead, toRemove);
+        s_game->print_updatedSnake(newHead, oldHead, toRemove);
         refresh();
     
         s_game->update_frame();

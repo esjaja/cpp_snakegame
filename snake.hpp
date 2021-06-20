@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #include <deque>
-#include <unordered_map>
+#include <vector>
 typedef std::pair<int, int> Coord2D;
 
 class Snake
@@ -18,11 +18,18 @@ class Snake
         Coord2D head() { return body.front(); }
         Coord2D tail() { return body.back(); }
         size_t length() { return body.size(); }
+        
+        std::vector<Coord2D> get_allpos()
+        {
+            return std::vector<Coord2D>(body.begin(), body.end());
+        }
 
         Snake(Coord2D initPos, Coord2D dir) : direction(dir) { 
             body.clear(); 
             body.push_front(initPos);
         }
+
+
 
         static const Coord2D noPos;
     private:

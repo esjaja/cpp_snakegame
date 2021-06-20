@@ -1,5 +1,5 @@
 #include "snake.hpp"
-
+#include <math.h>
 
 void Snake::change_dir(Coord2D dir)
 {

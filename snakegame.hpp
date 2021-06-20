@@ -1,6 +1,7 @@
 #ifndef _SNAKE_GAME_H
 #define _SNAKE_GAME_H
 
+#include <unordered_map>
 #include <ncurses.h>
 #include "snake.hpp"
 #include "game.hpp"
@@ -47,7 +48,7 @@ class SnakeGame : public Game
         void control_snake(int key);
         void print_map();
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
-        void print_snake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
+        void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
         Coord2D getMapCenter(Coord2D mapSize, Coord2D mapOffset) 
         {
             return {mapOffset.first + mapSize.first / 2, mapOffset.second + mapSize.second / 2};
