@@ -61,7 +61,7 @@ class SnakeGame : public Game
 
         void control_snake(int key);
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
-        
+
         void print_map();
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);

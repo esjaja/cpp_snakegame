@@ -1,6 +1,5 @@
 #include "snakegame.hpp"
 #include <unistd.h>
-#include <unistd.h>
 #include <vector>
 
 
@@ -64,9 +63,17 @@ bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove
     newHead = snake.nextPosition();
 
     // check collision
+    if(snakemap.test(newHead) == true)
+    {
+        mvprintw(4, 0, "Invalid: %d, %d", newHead.first, newHead.second);
+        // return false;
+    }
 
     oldHead = snake.head();
     toRemove = snake.move();
+
+    snakemap.set(newHead, true);
+    snakemap.set(toRemove, false);
 
     return true;
 }
@@ -131,10 +138,13 @@ void SnakePlayState::update()
         
         if(validMove == false)
         {
-
+            // s_game->setState(new SnakeInitState(s_game));
+            // return;
         }
-        
-        s_game->print_updatedSnake(newHead, oldHead, toRemove);
+        // else
+        // {
+            s_game->print_updatedSnake(newHead, oldHead, toRemove);
+        // }
         refresh();
     
         s_game->update_frame();

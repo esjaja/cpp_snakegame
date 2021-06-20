@@ -12,10 +12,14 @@ class SnakeMap
         {
             mapState.resize(row() * col());
             empty_space = mapState.size();
+            setWalls();
         }
         bool test(Coord2D pos);
+        void set(size_t index, bool occupy);
+        void set(int r, int c, bool occupy);
         void set(Coord2D pos, bool occupy);
         void set(std::vector<Coord2D> pos, bool occupy);
+        void setWalls();
 
         size_t getIndex(Coord2D pos);
 
