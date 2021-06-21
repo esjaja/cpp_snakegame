@@ -17,10 +17,18 @@ std::unordered_map<int, Coord2D> movementDir =
     {KEY_RIGHT, {0, 1}}
 };
 
-
+// ======================== SnakeGame =============================
 void SnakeGame::init()
 {
     setState(new SnakeInitState(this));
+}
+
+void SnakeGame::generate_food()
+{
+    Coord2D pos = snakemap.get_empty_pos();
+    food.insert(pos);
+    snakemap.set(pos, true);
+    printPos(pos, FOOD);
 }
 
 void SnakeGame::control_snake(int key)
@@ -31,12 +39,68 @@ void SnakeGame::control_snake(int key)
     }
 }
 
-bool SnakeGame::collision()
+bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove)
 {
+    newHead = snake.nextPosition();
+
+    // check collision
+    if(collision(newHead)) return false;
+
+    oldHead = snake.head();
+    toRemove = snake.move();
+
+    snakemap.set(newHead, true);
+    snakemap.set(toRemove, false);
+
+    return true;
+}
+
+bool SnakeGame::collision(const Coord2D& dest)
+{    
+    if(at_food(dest))
+    {
+        eat_food(dest);
+        add_score(1);
+        if(should_speed_up()) speed_up(1);
+        return false;
+    }
+    else if(snakemap.test(dest) == true)
+    {
+        return true;
+    }
     return false;
 }
 
-void SnakeGame::print_map()
+bool SnakeGame::at_food(const Coord2D& dest)
+{
+    return food.find(dest) != food.end();
+}
+
+void SnakeGame::eat_food(const Coord2D& dest)
+{
+    snake.eat(dest);
+    food.erase(dest);
+    snakemap.set(dest, false);
+}
+
+void SnakeGame::add_score(int value)
+{
+    score += value;
+}
+
+bool SnakeGame::should_speed_up()
+{
+    return ((get_fps() - init_fps)/FPS_STEP * PER_SCORE_TO_ADD_FPS 
+            + (PER_SCORE_TO_ADD_FPS - 1)) < score;
+}
+
+void SnakeGame::speed_up(int addlevel)
+{
+    set_fps(get_fps() + addlevel * FPS_STEP);
+}
+
+// =========== SnakeGame, print ================
+void SnakeGame::print_border()
 {
     Coord2D gameMap = snakemap.get_map();
     Coord2D mapOffset = snakemap.get_offset();
@@ -57,47 +121,29 @@ void SnakeGame::print_map()
                 gameMap.first, gameMap.second,
                 mapOffset.first, mapOffset.second);
 }
-
-bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove)
-{
-    newHead = snake.nextPosition();
-
-    // check collision
-    if(food.find(newHead) != food.end())
-    {
-        snake.eat(newHead);
-        food.erase(newHead);
-        snakemap.set(newHead, false);
-        score++;
-        if(((get_fps() - init_fps)/FPS_STEP) * PER_SCORE_TO_ADD_FPS + (PER_SCORE_TO_ADD_FPS - 1) < score)
-        {
-            set_fps(get_fps() + FPS_STEP);
-        }
-        mvprintw(4, 0, "Score: %d", score);
-    }
-    else if(snakemap.test(newHead) == true)
-    {
-        mvprintw(4, 0, "Invalid: %d, %d", newHead.first, newHead.second);
-        return false;
-    }
-
-    oldHead = snake.head();
-    toRemove = snake.move();
-
-    snakemap.set(newHead, true);
-    snakemap.set(toRemove, false);
-
-    return true;
-}
-
 void SnakeGame::print_allSnake()
 {
     std::vector<Coord2D> ss = snake.get_allpos();
     if(ss.begin() != ss.end()) printPos(*(ss.begin()), SNAKE_HEAD);
-    for(auto it = ss.begin() + 1; it != ss.end(); it++)
+    for(std::vector<Coord2D>::iterator it = ss.begin() + 1; it != ss.end(); it++)
     {
         printPos(*it, SNAKE_BODY);
     }
+}
+
+void SnakeGame::print_allFood()
+{
+    for(const Coord2D &coord : food)
+    {
+        printPos(coord, FOOD);
+    }
+}
+
+void SnakeGame::print_map()
+{
+    print_border();
+    print_allSnake();
+    print_allFood();
 }
 
 void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove)
@@ -108,14 +154,8 @@ void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHea
     if(toRemove != snake.noPos) printPos(toRemove, ' ');
 }
 
-void SnakeGame::generate_food()
-{
-    Coord2D pos = snakemap.get_empty_pos();
-    food.insert(pos);
-    snakemap.set(pos, true);
-    printPos(pos, FOOD);
-}
 
+// ===== State Object ====
 SnakeInitState::SnakeInitState(SnakeGame *game) : 
     StateBase(game), s_game(game) { }
 
@@ -127,7 +167,7 @@ void SnakeInitState::onStateEnter()
     clear();
     nodelay(stdscr, FALSE);
     mvprintw(0, 0, "Press 's' to start");
-    s_game->print_map();
+    s_game->print_border();
     refresh();
 }
 

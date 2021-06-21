@@ -57,8 +57,9 @@ class SnakeGame : public Game
     public:
         SnakeGame(Coord2D mapSize, int fps) : 
             Game(fps),
-            snakemap(mapSize, {(LINES - mapSize.first)/2, 
-                                (COLS - mapSize.second) / 2}),
+            snakemap(mapSize, 
+                    Coord2D((LINES - mapSize.first)/2, 
+                            (COLS - mapSize.second) / 2)),
             snake(snakemap.get_center(),
                   movementDir[KEY_RIGHT]), score(0), init_fps(fps)
             {
@@ -67,15 +68,23 @@ class SnakeGame : public Game
         void update();
         void init();
 
-        bool collision();
+        bool collision(const Coord2D& );
+        bool at_food(const Coord2D& );
+        void eat_food(const Coord2D &);
+        void add_score(int value);
         void generate_food();
+
+        bool should_speed_up();
+        void speed_up(int);
 
         void control_snake(int key);
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
 
         void print_map();
+        void print_border();
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
+        void print_allFood();
 
         void reset() 
         { 
@@ -92,7 +101,6 @@ class SnakeGame : public Game
         SnakeMap snakemap;
         Snake snake;
         std::unordered_set<Coord2D, MyHash> food;
-        WINDOW *border;
         int score;
         int init_fps;
 };

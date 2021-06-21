@@ -25,7 +25,7 @@ void Snake::eat(Coord2D food)
 
 bool Snake::digest()
 {
-    if(eatedFood.front() == tail())
+    if(eatedFood.size() > 0 && eatedFood.front() == tail())
     {
         eatedFood.pop_front();
         return true;

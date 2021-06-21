@@ -1,20 +1,22 @@
 PROGRAMS := main
-GCC := g++
-CFLAGS := -g -Wall -Wpedantic
+
+CXX := g++
 
 HEADER := ./header
 SOURCE := ./src
 
-LDFLAGS := -lncurses -I$(HEADER)
+CXXFLAGS := -std=c++11 -g -Wall -Wpedantic -I$(HEADER) 
+LDFLAGS := -lncurses 
+
 OBJS := snake.o game.o snakegame.o snakemap.o
 
 all: $(PROGRAMS)
 
 $(PROGRAMS): $(OBJS) main.cpp
-	$(GCC) $(CFLAGS) $(OBJS) $(LDFLAGS)  main.cpp -o $@
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) main.cpp $(LDFLAGS)  
 
 $(OBJS): %.o: $(SOURCE)/%.cpp $(HEADER)/%.hpp
-	$(GCC) $(CFLAGS) $(LDFLAGS) -c $<
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
 	rm $(PROGRAMS) $(OBJS)
