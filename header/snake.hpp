@@ -26,6 +26,7 @@ class Snake
         Coord2D head() { return body.front(); }
         Coord2D tail() { return body.back(); }
         size_t length() { return body.size(); }
+        Coord2D current_dir() { return direction; }
         
         std::vector<Coord2D> get_allpos()
         {

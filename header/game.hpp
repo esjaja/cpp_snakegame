@@ -33,14 +33,16 @@ class Game
         int get_fps() { return fps;}
         
         void setState(StateBase *state);
-
+        void setBlock(bool block) { nodelay(stdscr, !block); block_mode = block; }
+        bool isBlock() { return block_mode; }
         virtual void init();
         virtual void start();
 
         Game(int fps) : key(ERR), frame(0), 
                         ms_timeCounter(0), 
                         ms_totalTime(0),
-                        gameState(nullptr)
+                        gameState(nullptr),
+                        block_mode(false)
                         { 
                             set_fps(fps);
                         }
@@ -55,6 +57,7 @@ class Game
         double lastUpdateClock;
         double ms_totalTime;
         StateBase* gameState;
+        bool block_mode;
 };
 
 #endif

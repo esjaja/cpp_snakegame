@@ -45,6 +45,7 @@ void Game::update_frame()
 
 bool Game::should_update()
 {
+    if(block_mode) return true;
     return ms_timeCounter >= ms_perFrame;
 }
 
@@ -67,7 +68,7 @@ void Game::start()
     if(gameState == nullptr)
     {
         mvprintw(0, 0, "Error: no gameState loaded! Press any key to exit");
-        nodelay(stdscr, FALSE);
+        setBlock(true);
         getch();
         exit(EXIT_FAILURE);
     }
@@ -76,6 +77,9 @@ void Game::start()
     {
         update_timer();
         get_input();
-        gameState->update();
+        if(should_update())
+        {
+            gameState->update();
+        }
     }
 }

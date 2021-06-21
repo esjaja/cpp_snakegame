@@ -2,12 +2,89 @@
 #include <unistd.h>
 #include <vector>
 
-
-
-
 void printPos(Coord2D at, char ch = SNAKE_BODY) {
     mvaddch(at.first, at.second, ch);
 }
+ChangeDirCommand::ChangeDirCommand(SnakeGame *game, Coord2D dir) : 
+    Command(game), dir(dir), originDir(game->current_dir())
+    {}
+
+ChangeDirCommand::~ChangeDirCommand() {}
+
+bool ChangeDirCommand::execute()
+{
+    if(originDir != dir)
+    {
+        game->change_snake_dir(dir);
+    }
+    return true;
+}
+
+void ChangeDirCommand::undo()
+{
+    game->change_snake_dir(originDir);
+}
+MoveCommand::MoveCommand(SnakeGame *game) : Command(game){}
+bool MoveCommand::execute()
+{
+    Coord2D newHead, oldHead, toRemove;
+    bool validMove = game->move_snake(newHead, oldHead, toRemove);
+
+    char head = (game->foodCount() == 0) ? EATEN : SNAKE_BODY;
+    undo_queue.push({newHead, mvinch(newHead.first, newHead.second)});
+    printPos(newHead, SNAKE_HEAD);
+    undo_queue.push({oldHead, mvinch(oldHead.first, oldHead.second)});
+    printPos(oldHead, head);
+    if(toRemove != Snake::noPos) {
+        undo_queue.push({toRemove, mvinch(toRemove.first, toRemove.second)});
+        printPos(toRemove, ' ');
+    }
+
+    if(validMove == false)
+    {
+        game->setState(new SnakeInitState(game));
+        return false;
+    }
+    return true;
+}
+
+void MoveCommand::undo()
+{
+    int i = 0;
+    while(undo_queue.empty() == false)
+    {
+        std::pair<Coord2D, int> toPrint = undo_queue.top();
+        undo_queue.pop();
+        mvaddch(toPrint.first.first, toPrint.first.second, toPrint.second);
+    }
+}
+
+MoveCommand::~MoveCommand(){}
+
+CreateFoodCommand::CreateFoodCommand(SnakeGame *game) : Command(game){}
+CreateFoodCommand::~CreateFoodCommand() {}
+bool CreateFoodCommand::execute()
+{
+    if (game->foodCount() == 0)
+    {
+        Coord2D pos = game->generate_food();
+        if(pos != Snake::noPos)
+        {
+            printPos(pos, FOOD);
+        }
+        foodPos = pos;
+    }
+    return true;
+}
+
+void CreateFoodCommand::undo()
+{
+    if(foodPos != Snake::noPos)
+    {
+        
+    }
+}
+
 
 std::unordered_map<int, Coord2D> movementDir = 
 {
@@ -23,20 +100,28 @@ void SnakeGame::init()
     setState(new SnakeInitState(this));
 }
 
-void SnakeGame::generate_food()
+Coord2D SnakeGame::generate_food()
 {
     Coord2D pos = snakemap.get_empty_pos();
-    food.insert(pos);
-    snakemap.set(pos, true);
-    printPos(pos, FOOD);
+    if(pos != Snake::noPos)
+    {
+        food.insert(pos);
+        snakemap.set(pos, true);
+    }
+    return pos;
 }
 
 void SnakeGame::control_snake(int key)
 {
     if(movementDir.find(key) != movementDir.end())
     {
-        snake.change_dir(movementDir[key]);
+        change_snake_dir(movementDir[key]);
     }
+}
+
+void SnakeGame::change_snake_dir(Coord2D dir)
+{
+    snake.change_dir(dir);
 }
 
 bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove)
@@ -172,7 +257,7 @@ SnakeInitState::SnakeInitState(SnakeGame *game) :
 void SnakeInitState::onStateEnter()
 {
     clear();
-    nodelay(stdscr, FALSE);
+    s_game->setBlock(true);
     mvprintw(0, 0, "Press 's' to start");
     s_game->print_border();
     refresh();
@@ -188,48 +273,88 @@ void SnakeInitState::update()
 
 void SnakePlayState::onStateEnter()
 {
+    while(cmd_queue.empty() == false)
+    {
+        Command *cmd = cmd_queue.back();
+        cmd_queue.pop();
+        delete cmd;
+    }
     s_game->reset();
-    nodelay(stdscr, TRUE);
+    s_game->setBlock(false);
     
     mvprintw(0, 0, std::string(COLS, ' ').c_str());
 }
 
 void SnakePlayState::onStateExit()
 {
-    nodelay(stdscr, FALSE);
+    s_game->setBlock(true);
     mvprintw(4, 0, "GGG, Press any key");
     refresh();
     sleep(1);
     getch();
 }
 
+void SnakePlayState::addCommand(Command* cmd)
+{
+    cmd_queue.push(cmd);
+}
+
+void SnakePlayState::executeCommand()
+{
+    while(cmd_queue.empty() == false)
+    {
+        Command *cmd = cmd_queue.front();
+        cmd_queue.pop();
+        bool ok = cmd->execute();
+        history.push(cmd);
+        if(ok == false) return;
+    }
+}
+
 void SnakePlayState::update()
 {
-    if(s_game->should_update()){
-        int key = s_game->currentKey();
-        if(key != ERR)
+    int key = s_game->currentKey();
+    if(key != ERR)
+    {
+        mvprintw(0, 0, "Input: %c", key );
+    }
+    if(s_game->isBlock())
+    {
+        if(key == 'r')
+            s_game->setBlock(false);
+        else if(key == 'u')
         {
-            mvprintw(0, 0, "Input: %c", key );
-        }   
-
-        s_game->control_snake(key);
-
-        Coord2D newHead, oldHead, toRemove;
-        bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
-        s_game->print_updatedSnake(newHead, oldHead, toRemove);
-
-        if(validMove == false)
-        {
-            s_game->setState(new SnakeInitState(s_game));
-            return;
+            if(history.empty() == false){
+            Command *his = history.top();
+            history.pop();
+            his->undo();
+            delete his;
+            refresh();
+            }
         }
+    }
+    else if(key == 'p')
+    {
+        s_game->setBlock(true);
+    }
+    else if(s_game->isBlock() == false)
+    {
+        addCommand(new ChangeDirCommand(s_game, movementDir[key]));
+        addCommand(new MoveCommand(s_game));
+        executeCommand();
+        // s_game->control_snake(key);
 
-        if (s_game->foodCount() == 0)
-        {
-            s_game->generate_food();
-        }
+        // Coord2D newHead, oldHead, toRemove;
+        // bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
+        // s_game->print_updatedSnake(newHead, oldHead, toRemove);
+
+        // if(validMove == false)
+        // {
+        //     s_game->setState(new SnakeInitState(s_game));
+        //     return;
+        // }
+
         refresh();
-    
         s_game->update_frame();
     }
 }

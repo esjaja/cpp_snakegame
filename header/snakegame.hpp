@@ -5,9 +5,12 @@
 #include <unordered_map>
 #include <vector>
 #include <ncurses.h>
+#include <queue>
+#include <stack>
 #include "snake.hpp"
 #include "game.hpp"
 #include "snakemap.hpp"
+#include "command.hpp"
 
 #define FOOD 'o'
 #define EATEN 'O'
@@ -46,6 +49,11 @@ class SnakePlayState : public SnakeInitState {
         void onStateEnter();
         void update();
         void onStateExit();
+        void addCommand(Command* cmd);
+        void executeCommand();
+    private:
+        std::queue<Command*> cmd_queue;
+        std::stack<Command*> history;
 };
 
 
@@ -72,12 +80,14 @@ class SnakeGame : public Game
         bool at_food(const Coord2D& );
         void eat_food(const Coord2D &);
         void add_score(int value);
-        void generate_food();
+        Coord2D generate_food();
 
         bool should_speed_up();
         void speed_up(int);
 
+        Coord2D current_dir() { return snake.current_dir(); }
         void control_snake(int key);
+        void change_snake_dir(Coord2D dir);
         bool move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove);
 
         void print_map();
