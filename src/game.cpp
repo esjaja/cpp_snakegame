@@ -3,8 +3,13 @@
 inline
 double get_current_ms_clock()
 {
-    clock_t ticks = clock();
-    return (ticks / (double)CLOCKS_PER_SEC) * 1000.0;
+    // This measure CPU time, not real elapsed time
+    // clock_t ticks = clock();
+    // return (ticks / (double)CLOCKS_PER_SEC) * 1000.0;
+
+    struct timeval start;
+    gettimeofday(&start, NULL);
+    return start.tv_sec * 1000.0 + start.tv_usec / 1000.0;
 }
 
 inline
@@ -16,15 +21,26 @@ void Game::get_input()
 
 
 void Game::set_fps(int _fps)
-{ fps = _fps; ms_perFrame = 1000.0 / fps; }
+{ 
+    fps = _fps; 
+    ms_perFrame = 1000.0 / fps; 
+}
  
 
 void Game::update_timer()
 {
-    double clockPassed = get_current_ms_clock();
-    ms_timeCounter += (clockPassed - lastUpdateClock);
-    lastUpdateClock = clockPassed;
-    mvprintw(2,0,"FPS: %d, Time elapsed: %.2lf", fps, ms_timeCounter);
+    double current_time = get_current_ms_clock() ;
+    double clockPassed = (current_time - lastUpdateClock);
+    ms_totalTime += clockPassed;
+    ms_timeCounter += clockPassed;
+    lastUpdateClock = current_time;
+    mvprintw(2,0,"FPS: %d, Frame: %d, Time elapsed: %.2lf", fps, frame, ms_totalTime);
+}
+
+void Game::update_frame()
+{
+    ms_timeCounter = 0; 
+    frame++; 
 }
 
 bool Game::should_update()

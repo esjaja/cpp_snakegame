@@ -3,6 +3,7 @@
 
 #include <ncurses.h>
 #include <iostream>
+#include <sys/time.h>
 
 double get_current_ms_clock();
 
@@ -27,7 +28,7 @@ class Game
 
         void update_timer();
         bool should_update();
-        void update_frame() { ms_timeCounter = 0; frame++; }
+        void update_frame();
         void set_fps(int _fps);
         int get_fps() { return fps;}
         
@@ -37,7 +38,9 @@ class Game
         virtual void start();
 
         Game(int fps) : key(ERR), frame(0), 
-                        ms_timeCounter(0), gameState(nullptr)
+                        ms_timeCounter(0), 
+                        ms_totalTime(0),
+                        gameState(nullptr)
                         { 
                             set_fps(fps);
                         }
@@ -50,6 +53,7 @@ class Game
         double ms_perFrame;
         double ms_timeCounter;
         double lastUpdateClock;
+        double ms_totalTime;
         StateBase* gameState;
 };
 
