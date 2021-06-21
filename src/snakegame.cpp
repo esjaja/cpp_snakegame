@@ -61,6 +61,9 @@ bool SnakeGame::collision(const Coord2D& dest)
         eat_food(dest);
         add_score(1);
         if(should_speed_up()) speed_up(1);
+        
+        print_score(3, 0);
+
         return false;
     }
     else if(snakemap.test(dest) == true)
@@ -153,6 +156,11 @@ void SnakeGame::print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHea
     if(toRemove != snake.noPos) printPos(toRemove, ' ');
 }
 
+void SnakeGame::print_score(int r, int c)
+{
+    mvprintw(r, c, "Score: %d", score);
+}
+
 
 // ===== State Object ====
 SnakeInitState::SnakeInitState(SnakeGame *game) : 
@@ -220,7 +228,6 @@ void SnakePlayState::update()
         {
             s_game->generate_food();
         }
-        
         refresh();
     
         s_game->update_frame();

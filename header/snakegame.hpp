@@ -85,6 +85,7 @@ class SnakeGame : public Game
         void print_allSnake();
         void print_updatedSnake(const Coord2D &newHead, const Coord2D &oldHead, const Coord2D &toRemove);
         void print_allFood();
+        void print_score(int r, int c);
 
         void reset() 
         { 

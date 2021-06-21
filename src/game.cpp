@@ -34,7 +34,7 @@ void Game::update_timer()
     ms_totalTime += clockPassed;
     ms_timeCounter += clockPassed;
     lastUpdateClock = current_time;
-    mvprintw(2,0,"FPS: %d, Frame: %d, Time elapsed: %.2lf", fps, frame, ms_totalTime);
+    mvprintw(2,0,"FPS: %d, Frame: %d, Time elapsed: %.2lf sec", fps, frame, ms_totalTime / 1000);
 }
 
 void Game::update_frame()
