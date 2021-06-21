@@ -42,11 +42,10 @@ void SnakeGame::control_snake(int key)
 bool SnakeGame::move_snake(Coord2D &newHead, Coord2D &oldHead, Coord2D &toRemove)
 {
     newHead = snake.nextPosition();
-
+    oldHead = snake.head();
+    toRemove = snake.tail();
     // check collision
     if(collision(newHead)) return false;
-
-    oldHead = snake.head();
     toRemove = snake.move();
 
     snakemap.set(newHead, true);
@@ -209,13 +208,13 @@ void SnakePlayState::update()
 
         Coord2D newHead, oldHead, toRemove;
         bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
-        
+        s_game->print_updatedSnake(newHead, oldHead, toRemove);
+
         if(validMove == false)
         {
             s_game->setState(new SnakeInitState(s_game));
             return;
         }
-        s_game->print_updatedSnake(newHead, oldHead, toRemove);
 
         if (s_game->foodCount() == 0)
         {

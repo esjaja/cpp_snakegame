@@ -10,7 +10,7 @@
 #include "snakemap.hpp"
 
 #define FOOD 'o'
-#define EATEN '%'
+#define EATEN 'O'
 #define WALL '#'
 #define SNAKE_BODY '*'
 #define SNAKE_HEAD '@'
