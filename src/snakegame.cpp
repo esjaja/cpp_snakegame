@@ -210,10 +210,10 @@ void SnakePlayState::onStateEnter()
 
 void SnakePlayState::onStateExit()
 {
-    s_game->set_input_block(true);
-    mvprintw(4, 0, "GGG, Press any key");
     refresh();
+    s_game->set_input_block(true);
     sleep(1);
+    mvprintw(4, 0, "GGG, Press any key");
     getch();
 }
 
@@ -223,9 +223,19 @@ void SnakePlayState::update()
     if(key != ERR)
     {
         mvprintw(0, 0, "Input: %c", key );
-    }   
+        
+        if(s_game->is_input_block())
+        {
+            s_game->set_input_block(false);
+        }
+        else if(key == 'p')
+        {
+            mvprintw(0, 0, "[PAUSE], press any key to continue");
+            s_game->set_input_block(true);
+        }
 
-    s_game->control_snake(key);
+        s_game->control_snake(key);
+    } 
 
     Coord2D newHead, oldHead, toRemove;
     bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
@@ -241,8 +251,9 @@ void SnakePlayState::update()
     {
         s_game->generate_food();
     }
-    refresh();
-
     s_game->update_frame();
+
+
+    refresh();
 }
 

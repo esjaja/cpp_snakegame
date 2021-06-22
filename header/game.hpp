@@ -42,10 +42,10 @@ class Game
         Game(int fps) : key(ERR), frame(0), 
                         ms_timeCounter(0), 
                         ms_totalTime(0),
-                        gameState(nullptr),
-                        input_block_mode(true)
+                        gameState(nullptr)
                         { 
                             set_fps(fps);
+                            set_input_block(true);
                         }
         virtual ~Game() {}
         StateBase* pauseState;

@@ -28,14 +28,6 @@ A Snake game using `ncurses` library to control terminal IO.
 - Use direction (left, right, up, down...) to determine next movement pos
 - Record ate food, to increase the length of body
 
-## Notes
-1. control input reading by `ncurses`, (1) `nodelay(WINDOWS*, true)` = will not block, (2) `nodelay(WINDOWS*, false)` = will blocked, so in game loop, if it is set to blocked mode, the timer won't be updated till a key is typed. Thus only those state objects who set getch nonblock (by nodelay(, true)) should call `should_update()` function to check if it's time to refresh a frame.
-
-2. `ncurses` coordinate: (0, 0) the left most of terminal, (1, 0) to down, (0, 1) to right. (row, col)
-
-3. Define `pair<int, int>` to represent (row, col)
-
-4. Snake record the absolute position (where it is on terminal), so SnakeMap should substract mapoffset from it to get corresponding position in its internal map.
 
 ## TODO
 1. menu, pause, resume, restart, replay
