@@ -45,21 +45,34 @@ void Game::update_frame()
 
 bool Game::should_update()
 {
-    return ms_timeCounter >= ms_perFrame;
+    if(is_input_block()) return true;
+    else return ms_timeCounter >= ms_perFrame;
 }
 
-void Game::setState(StateBase *state)
+void Game::set_state(StateBase *state)
 {
     if(gameState){
         gameState->onStateExit(); 
-        delete gameState;
+        delete gameState;   // ??
     }
     gameState = state; 
     gameState->onStateEnter(); 
 }
 
+void Game::set_input_block(bool setBlock)
+{
+    nodelay(stdscr, !setBlock);
+    input_block_mode = setBlock;
+}
+
+bool Game::is_input_block()
+{
+    return input_block_mode;
+}
+
 void Game::init()
 {
+    set_input_block(true);
 }
 
 void Game::start()
@@ -67,7 +80,7 @@ void Game::start()
     if(gameState == nullptr)
     {
         mvprintw(0, 0, "Error: no gameState loaded! Press any key to exit");
-        nodelay(stdscr, FALSE);
+        set_input_block(true);
         getch();
         exit(EXIT_FAILURE);
     }
@@ -76,6 +89,9 @@ void Game::start()
     {
         update_timer();
         get_input();
-        gameState->update();
+        if(should_update())
+        {
+            gameState->update();
+        }
     }
 }

@@ -87,15 +87,7 @@ class SnakeGame : public Game
         void print_allFood();
         void print_score(int r, int c);
 
-        void reset() 
-        { 
-            set_fps(init_fps);
-            score = 0;
-            food.clear();
-            snakemap.reset(); 
-            snake.reset(snakemap.get_center(), movementDir[KEY_RIGHT]); 
-            snakemap.set(snake.get_allpos(), true);
-        }
+        void reset();
 
         size_t foodCount() { return food.size(); }
     private:

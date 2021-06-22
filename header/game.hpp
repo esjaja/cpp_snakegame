@@ -32,7 +32,9 @@ class Game
         void set_fps(int _fps);
         int get_fps() { return fps;}
         
-        void setState(StateBase *state);
+        void set_state(StateBase *state);
+        void set_input_block(bool setBlock);
+        bool is_input_block();
 
         virtual void init();
         virtual void start();
@@ -40,7 +42,8 @@ class Game
         Game(int fps) : key(ERR), frame(0), 
                         ms_timeCounter(0), 
                         ms_totalTime(0),
-                        gameState(nullptr)
+                        gameState(nullptr),
+                        input_block_mode(true)
                         { 
                             set_fps(fps);
                         }
@@ -50,10 +53,14 @@ class Game
         int key;
         int fps;
         int frame;
+
         double ms_perFrame;
         double ms_timeCounter;
         double lastUpdateClock;
         double ms_totalTime;
+
+        bool input_block_mode;
+
         StateBase* gameState;
 };
 

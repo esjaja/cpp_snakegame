@@ -20,7 +20,21 @@ std::unordered_map<int, Coord2D> movementDir =
 // ======================== SnakeGame =============================
 void SnakeGame::init()
 {
-    setState(new SnakeInitState(this));
+    set_state(new SnakeInitState(this));
+}
+
+void SnakeGame::reset()
+{ 
+    set_fps(init_fps);
+    
+    score = 0;
+    
+    food.clear();
+    
+    snake.reset(snakemap.get_center(), movementDir[KEY_RIGHT]); 
+    
+    snakemap.reset(); 
+    snakemap.set(snake.get_allpos(), true);
 }
 
 void SnakeGame::generate_food()
@@ -172,7 +186,7 @@ SnakeInitState::SnakeInitState(SnakeGame *game) :
 void SnakeInitState::onStateEnter()
 {
     clear();
-    nodelay(stdscr, FALSE);
+    s_game->set_input_block(true);
     mvprintw(0, 0, "Press 's' to start");
     s_game->print_border();
     refresh();
@@ -182,21 +196,21 @@ void SnakeInitState::update()
 {
     if(s_game->currentKey() == 's')
     {
-        s_game->setState(new SnakePlayState(s_game));
+        s_game->set_state(new SnakePlayState(s_game));
     }
 }
 
 void SnakePlayState::onStateEnter()
 {
     s_game->reset();
-    nodelay(stdscr, TRUE);
+    s_game->set_input_block(false);
     
     mvprintw(0, 0, std::string(COLS, ' ').c_str());
 }
 
 void SnakePlayState::onStateExit()
 {
-    nodelay(stdscr, FALSE);
+    s_game->set_input_block(true);
     mvprintw(4, 0, "GGG, Press any key");
     refresh();
     sleep(1);
@@ -205,32 +219,30 @@ void SnakePlayState::onStateExit()
 
 void SnakePlayState::update()
 {
-    if(s_game->should_update()){
-        int key = s_game->currentKey();
-        if(key != ERR)
-        {
-            mvprintw(0, 0, "Input: %c", key );
-        }   
+    int key = s_game->currentKey();
+    if(key != ERR)
+    {
+        mvprintw(0, 0, "Input: %c", key );
+    }   
 
-        s_game->control_snake(key);
+    s_game->control_snake(key);
 
-        Coord2D newHead, oldHead, toRemove;
-        bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
-        s_game->print_updatedSnake(newHead, oldHead, toRemove);
+    Coord2D newHead, oldHead, toRemove;
+    bool validMove = s_game->move_snake(newHead, oldHead, toRemove);
+    s_game->print_updatedSnake(newHead, oldHead, toRemove);
 
-        if(validMove == false)
-        {
-            s_game->setState(new SnakeInitState(s_game));
-            return;
-        }
-
-        if (s_game->foodCount() == 0)
-        {
-            s_game->generate_food();
-        }
-        refresh();
-    
-        s_game->update_frame();
+    if(validMove == false)
+    {
+        s_game->set_state(new SnakeInitState(s_game));
+        return;
     }
+
+    if (s_game->foodCount() == 0)
+    {
+        s_game->generate_food();
+    }
+    refresh();
+
+    s_game->update_frame();
 }
 
